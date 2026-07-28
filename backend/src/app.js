@@ -48,9 +48,13 @@ const startServer = async () => {
   });
 };
 
-startServer().catch((error) => {
-  console.error("Server startup failed:", error);
-  process.exit(1);
-});
+// Run a real listening server only in local/Render mode. On Vercel the
+// serverless entry (api/index.js) imports `app` and connects the DB itself.
+if (!process.env.VERCEL) {
+  startServer().catch((error) => {
+    console.error("Server startup failed:", error);
+    process.exit(1);
+  });
+}
 
 export default app;
