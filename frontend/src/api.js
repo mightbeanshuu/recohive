@@ -32,11 +32,13 @@ export const api = {
   updateInventory: (id, inventory) =>
     request(`/inventory/${id}`, { method: "PUT", body: JSON.stringify(inventory) }).then((payload) => payload.data),
 
-  generateRecommendations: (productId) =>
+  // query is an optional plain-English goal the AI agent parses into intent.
+  // Returns the full payload so the UI can show the agent's parsed intent too.
+  generateRecommendations: (productId, query) =>
     request("/recommendations/generate-recommendations", {
       method: "POST",
-      body: JSON.stringify({ productId }),
-    }).then((payload) => payload.recommendations || []),
+      body: JSON.stringify({ productId, ...(query ? { query } : {}) }),
+    }).then((payload) => ({ recommendations: payload.recommendations || [], agent: payload.agent || { used: false } })),
   topRecommended: () => request("/analytics/top-recommended").then((payload) => payload.data || []),
 };
 
